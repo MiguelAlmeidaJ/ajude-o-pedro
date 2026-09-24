@@ -2,7 +2,7 @@ name: PHP lint
 
 on:
   push:
-    branches: ["feature/rifa-solidaria-mvp"]
+    branches: ["main", "feature/rifa-solidaria-mvp"]
   pull_request:
 
 jobs:
