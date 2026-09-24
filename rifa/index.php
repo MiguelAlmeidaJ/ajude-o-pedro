@@ -2,7 +2,21 @@
 declare(strict_types=1);
 require __DIR__ . '/../app/bootstrap.php';
 
-$campaign = active_campaign();
+$slug = trim((string) ($_GET['slug'] ?? ''));
+
+if ($slug === '') {
+    $active = active_campaign();
+    if ($active) {
+        redirect(campaign_path($active));
+    }
+    $campaign = null;
+} else {
+    $campaign = campaign_by_slug($slug);
+    if (!$campaign || $campaign['status'] !== 'active') {
+        http_response_code(404);
+        $campaign = null;
+    }
+}
 
 if ($campaign) {
     cleanup_expired_reservations((int) $campaign['id']);
@@ -26,8 +40,8 @@ require __DIR__ . '/../partials/header.php';
 <main class="container py-5">
     <div class="soft-card p-5 text-center">
         <div class="brand-heart mx-auto mb-3"><i class="bi bi-heart-fill"></i></div>
-        <h1 class="h2 fw-bold">A rifa está sendo preparada.</h1>
-        <p class="text-secondary mb-3">Em breve você poderá escolher seus números e participar.</p>
+        <h1 class="h2 fw-bold"><?= $slug !== '' ? 'Rifa não encontrada ou encerrada.' : 'A rifa está sendo preparada.' ?></h1>
+        <p class="text-secondary mb-3"><?= $slug !== '' ? 'Confira se o endereço está correto ou volte para a página inicial.' : 'Em breve você poderá escolher seus números e participar.' ?></p>
         <a class="btn btn-outline-primary" href="<?= e(url('/')) ?>">Voltar ao início</a>
     </div>
 </main>
