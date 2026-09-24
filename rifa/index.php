@@ -21,9 +21,6 @@ if ($slug === '') {
 if ($campaign) {
     cleanup_expired_reservations((int) $campaign['id']);
     $stats = campaign_stats((int) $campaign['id']);
-    $q = db()->prepare("SELECT number,status FROM raffle_numbers WHERE campaign_id = ? ORDER BY number");
-    $q->execute([$campaign['id']]);
-    $numbers = $q->fetchAll();
     $gallery = json_decode($campaign['gallery_json'] ?: '[]', true) ?: [];
     $digits = max(3, strlen((string) $campaign['total_numbers']));
     $percent = $campaign['goal_amount'] > 0
@@ -136,32 +133,42 @@ require __DIR__ . '/../partials/header.php';
             </p>
         </div>
 
-        <form method="post" action="<?= e(url('/reservar.php')) ?>" class="row g-4" data-raffle-form data-price="<?= e((string) $campaign['number_price']) ?>" data-digits="<?= $digits ?>">
+        <form method="post" action="<?= e(url('/reservar.php')) ?>" class="row g-4" data-raffle-form data-price="<?= e((string) $campaign['number_price']) ?>" data-digits="<?= $digits ?>" data-campaign-id="<?= (int) $campaign['id'] ?>" data-numbers-api="<?= e(url('/api/numeros.php')) ?>">
             <?= csrf_field() ?>
             <input type="hidden" name="campaign_id" value="<?= (int) $campaign['id'] ?>">
 
             <div class="col-lg-8">
                 <div class="soft-card p-3 p-md-4">
-                    <div class="d-flex flex-wrap gap-3 small mb-3">
-                        <span><i class="bi bi-square text-primary"></i> Disponível</span>
-                        <span><i class="bi bi-square-fill text-secondary opacity-50"></i> Reservado/vendido</span>
+                    <div class="number-toolbar mb-3">
+                        <div class="d-flex flex-wrap gap-3 small">
+                            <span><i class="bi bi-square text-primary"></i> Disponível</span>
+                            <span><i class="bi bi-square-fill text-secondary opacity-50"></i> Reservado/vendido</span>
+                        </div>
+
+                        <div class="input-group number-search">
+                            <span class="input-group-text"><i class="bi bi-search"></i></span>
+                            <input class="form-control" type="number" min="1" max="<?= (int) $campaign['total_numbers'] ?>" placeholder="Buscar número" data-number-search>
+                            <button class="btn btn-outline-secondary" type="button" data-number-search-clear aria-label="Limpar busca"><i class="bi bi-x-lg"></i></button>
+                        </div>
                     </div>
 
-                    <div class="number-grid">
-                        <?php foreach ($numbers as $item):
-                            $available = $item['status'] === 'available';
-                            $formatted = str_pad((string) $item['number'], $digits, '0', STR_PAD_LEFT);
-                        ?>
-                        <div class="number-option">
-                            <?php if ($available): ?>
-                                <input type="checkbox" name="numbers[]" id="n<?= (int) $item['number'] ?>" value="<?= (int) $item['number'] ?>">
-                                <label for="n<?= (int) $item['number'] ?>"><?= e($formatted) ?></label>
-                            <?php else: ?>
-                                <label class="unavailable" aria-disabled="true"><?= e($formatted) ?></label>
-                            <?php endif; ?>
+                    <div class="number-grid" data-number-grid>
+                        <div class="number-grid-loading">
+                            <span class="spinner-border spinner-border-sm me-2"></span>Carregando números...
                         </div>
-                        <?php endforeach; ?>
                     </div>
+
+                    <div class="number-pagination mt-3">
+                        <button class="btn btn-light border" type="button" data-number-prev>
+                            <i class="bi bi-chevron-left"></i><span class="d-none d-sm-inline ms-1">Anterior</span>
+                        </button>
+                        <span class="small text-secondary text-center" data-number-page-label>Carregando...</span>
+                        <button class="btn btn-light border" type="button" data-number-next>
+                            <span class="d-none d-sm-inline me-1">Próxima</span><i class="bi bi-chevron-right"></i>
+                        </button>
+                    </div>
+
+                    <div data-selected-inputs></div>
                 </div>
             </div>
 
