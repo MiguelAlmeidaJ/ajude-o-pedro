@@ -53,3 +53,42 @@ body{background:#f7f9fc;color:var(--pedro-ink);font-family:Inter,system-ui,-appl
     .min-vh-75{min-height:auto}
     .home-photo{margin:0 auto;max-width:520px}
 }
+
+
+/* Seletor de números otimizado */
+.number-toolbar{display:flex;align-items:center;justify-content:space-between;gap:1rem}
+.number-search{max-width:250px}
+.number-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(58px,1fr));gap:8px;max-height:520px;overflow:auto;padding:4px;align-content:start}
+.number-button{min-height:48px;border:1px solid #d8e1ee;border-radius:12px;background:#fff;color:var(--pedro-ink);font-weight:700;cursor:pointer;transition:transform .12s ease,border-color .12s ease,background .12s ease,box-shadow .12s ease}
+.number-button:hover{border-color:#9bbded;background:#f7fbff}
+.number-button.selected{background:var(--pedro-blue);border-color:var(--pedro-blue);color:#fff;box-shadow:0 7px 18px rgba(18,103,229,.18)}
+.number-button.unavailable{background:#f0f2f5;border-color:#e5e7eb;color:#a0a8b4;text-decoration:line-through;cursor:not-allowed;box-shadow:none}
+.number-grid-loading,.number-grid-empty{grid-column:1/-1;min-height:180px;display:flex;align-items:center;justify-content:center;text-align:center;color:var(--pedro-muted)}
+.number-grid.is-loading{opacity:.72;pointer-events:none}
+.number-pagination{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:.75rem}
+.number-pagination .btn{min-width:48px}
+
+/* Responsividade pública */
+@media(max-width:767.98px){
+    .hero{padding:1.75rem 0 1rem}
+    .hero .row{gap:1.75rem!important}
+    .hero-photo{min-height:0;border-radius:22px}
+    .hero-photo img{min-height:0;aspect-ratio:4/5}
+    .hero-badge{left:12px;right:12px;bottom:12px}
+    .display-title{font-size:clamp(2.2rem,11vw,3.25rem);line-height:1}
+    .lead-copy{font-size:1rem;line-height:1.65}
+    section.py-5{padding-top:2.5rem!important;padding-bottom:2.5rem!important}
+    .number-toolbar{align-items:stretch;flex-direction:column}
+    .number-search{max-width:none;width:100%}
+    .number-grid{grid-template-columns:repeat(4,minmax(0,1fr));gap:7px;max-height:420px}
+    .number-button{min-height:50px;border-radius:10px;font-size:.95rem}
+    .checkout-card{position:static}
+    .selected-list{max-height:130px;overflow:auto}
+    .payment-card{max-width:100%}
+    .qr-box{width:min(270px,100%);height:auto;aspect-ratio:1}
+    .soft-card.p-4,.soft-card.p-md-5{padding:1.25rem!important}
+}
+
+@media(min-width:768px) and (max-width:991.98px){
+    .number-grid{grid-template-columns:repeat(7,minmax(0,1fr))}
+}
