@@ -25,7 +25,10 @@ $pageTitle = 'Doação via Pix • ' . $donation['campaign_title'];
 $campaignForHeader = null;
 require __DIR__ . '/partials/header.php';
 
-$paymentLink = url('/doacao.php?doacao=' . urlencode($token));
+$scheme = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
+$host = preg_replace('/[^A-Za-z0-9.\-:\[\]]/', '', (string) ($_SERVER['HTTP_HOST'] ?? ''));
+$paymentPath = url('/doacao.php?doacao=' . urlencode($token));
+$paymentLink = $host !== '' ? $scheme . '://' . $host . $paymentPath : $paymentPath;
 ?>
 <main class="container py-5">
     <div class="payment-card">
