@@ -137,6 +137,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $campaignId = (int) $pdo->lastInsertId();
             }
 
+            if ($data['status'] === 'active') {
+                $close = $pdo->prepare(
+                    "UPDATE campaigns
+                     SET status = 'closed'
+                     WHERE status = 'active' AND id <> ?"
+                );
+                $close->execute([$campaignId]);
+            }
+
             sync_campaign_numbers($campaignId, $data['total_numbers']);
             $pdo->commit();
 
