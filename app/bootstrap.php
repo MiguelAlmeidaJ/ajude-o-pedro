@@ -27,3 +27,4 @@ require_once __DIR__ . '/csrf.php';
 require_once __DIR__ . '/auth.php';
 require_once __DIR__ . '/pix.php';
 require_once __DIR__ . '/raffle.php';
+require_once __DIR__ . '/donations.php';
