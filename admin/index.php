@@ -7,8 +7,12 @@ cleanup_expired_reservations();
 
 $campaignCount = (int) db()->query("SELECT COUNT(*) FROM campaigns")->fetchColumn();
 $orderCount = (int) db()->query("SELECT COUNT(*) FROM orders")->fetchColumn();
-$paidTotal = (float) db()->query("SELECT COALESCE(SUM(total_amount),0) FROM orders WHERE status='paid'")->fetchColumn();
+$paidOrdersTotal = (float) db()->query("SELECT COALESCE(SUM(total_amount),0) FROM orders WHERE status='paid'")->fetchColumn();
+$paidDonationsTotal = (float) db()->query("SELECT COALESCE(SUM(amount),0) FROM donations WHERE status='paid'")->fetchColumn();
+$paidTotal = $paidOrdersTotal + $paidDonationsTotal;
 $pendingCount = (int) db()->query("SELECT COUNT(*) FROM orders WHERE status='pending'")->fetchColumn();
+$donationCount = (int) db()->query("SELECT COUNT(*) FROM donations")->fetchColumn();
+$pendingDonations = (int) db()->query("SELECT COUNT(*) FROM donations WHERE status='pending'")->fetchColumn();
 
 $recent = db()->query(
     "SELECT o.id,o.customer_name,o.total_amount,o.status,o.created_at,c.title campaign_title
@@ -42,18 +46,21 @@ require __DIR__ . '/partials/header.php';
         <div class="admin-card p-4 h-100">
             <div class="small text-secondary">Participações</div>
             <div class="display-6 fw-bold"><?= $orderCount ?></div>
+            <div class="small text-secondary mt-1"><?= $donationCount ?> doação(ões)</div>
         </div>
     </div>
     <div class="col-6 col-xl-3">
         <div class="admin-card p-4 h-100">
-            <div class="small text-secondary">Pix confirmados</div>
+            <div class="small text-secondary">Arrecadado confirmado</div>
             <div class="h3 fw-bold mb-0"><?= money($paidTotal) ?></div>
+            <div class="small text-secondary mt-1">Rifa + doações</div>
         </div>
     </div>
     <div class="col-6 col-xl-3">
         <div class="admin-card p-4 h-100">
             <div class="small text-secondary">Aguardando</div>
-            <div class="display-6 fw-bold"><?= $pendingCount ?></div>
+            <div class="display-6 fw-bold"><?= $pendingCount + $pendingDonations ?></div>
+            <div class="small text-secondary mt-1"><?= $pendingCount ?> rifa • <?= $pendingDonations ?> doação</div>
         </div>
     </div>
 </div>
