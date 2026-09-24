@@ -70,7 +70,7 @@ CREATE TABLE IF NOT EXISTS order_numbers (
     order_id BIGINT UNSIGNED NOT NULL,
     raffle_number_id BIGINT UNSIGNED NOT NULL,
     PRIMARY KEY (order_id, raffle_number_id),
-    UNIQUE KEY uq_raffle_number_order (raffle_number_id),
+    INDEX idx_order_numbers_number (raffle_number_id),
     CONSTRAINT fk_order_numbers_order FOREIGN KEY (order_id) REFERENCES orders(id) ON DELETE CASCADE,
     CONSTRAINT fk_order_numbers_number FOREIGN KEY (raffle_number_id) REFERENCES raffle_numbers(id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
