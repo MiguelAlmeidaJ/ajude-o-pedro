@@ -23,6 +23,7 @@ $current = basename($_SERVER['PHP_SELF']);
             <a class="admin-link <?= $current === 'index.php' ? 'active' : '' ?>" href="<?= e(url('/admin/')) ?>"><i class="bi bi-grid"></i>Visão geral</a>
             <a class="admin-link <?= in_array($current, ['campanhas.php','campanha.php'], true) ? 'active' : '' ?>" href="<?= e(url('/admin/campanhas.php')) ?>"><i class="bi bi-megaphone"></i>Campanhas</a>
             <a class="admin-link <?= $current === 'pedidos.php' ? 'active' : '' ?>" href="<?= e(url('/admin/pedidos.php')) ?>"><i class="bi bi-receipt"></i>Participações</a>
+            <a class="admin-link <?= $current === 'doacoes.php' ? 'active' : '' ?>" href="<?= e(url('/admin/doacoes.php')) ?>"><i class="bi bi-cash-heart"></i>Doações</a>
             <?php if (is_dev()): ?>
             <a class="admin-link <?= $current === 'usuarios.php' ? 'active' : '' ?>" href="<?= e(url('/admin/usuarios.php')) ?>"><i class="bi bi-people"></i>Usuários</a>
             <?php endif; ?>
