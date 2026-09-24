@@ -84,11 +84,23 @@ function campaign_stats(int $campaignId): array
     $row = $q->fetch() ?: [];
 
     $v = $pdo->prepare(
-        "SELECT COALESCE(SUM(total_amount), 0)
-         FROM orders
+        "SELECT
+            (SELECT COALESCE(SUM(total_amount), 0)
+             FROM orders
+             WHERE campaign_id = ? AND status = 'paid')
+            +
+            (SELECT COALESCE(SUM(amount), 0)
+             FROM donations
+             WHERE campaign_id = ? AND status = 'paid')"
+    );
+    $v->execute([$campaignId, $campaignId]);
+
+    $d = $pdo->prepare(
+        "SELECT COALESCE(SUM(amount), 0)
+         FROM donations
          WHERE campaign_id = ? AND status = 'paid'"
     );
-    $v->execute([$campaignId]);
+    $d->execute([$campaignId]);
 
     return [
         'total' => (int) ($row['total'] ?? 0),
@@ -96,6 +108,7 @@ function campaign_stats(int $campaignId): array
         'reserved' => (int) ($row['reserved'] ?? 0),
         'available' => (int) ($row['available'] ?? 0),
         'raised' => (float) $v->fetchColumn(),
+        'donations_raised' => (float) $d->fetchColumn(),
     ];
 }
 
