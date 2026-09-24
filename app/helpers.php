@@ -106,6 +106,13 @@ function campaign_by_slug(string $slug): ?array
     return $q->fetch() ?: null;
 }
 
+function campaign_path(array|string $campaign): string
+{
+    $slug = is_array($campaign) ? (string) ($campaign['slug'] ?? '') : $campaign;
+    $slug = slugify($slug);
+    return '/rifa/' . $slug . '/';
+}
+
 function active_campaign(): ?array
 {
     $q = db()->query("SELECT * FROM campaigns WHERE status = 'active' ORDER BY id DESC LIMIT 1");
