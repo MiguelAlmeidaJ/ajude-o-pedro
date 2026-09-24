@@ -36,10 +36,10 @@ require __DIR__ . '/partials/header.php';
                     <div id="qrcode" class="qr-box my-4"></div>
 
                     <div class="d-grid gap-2 mb-3">
-                        <button class="btn btn-primary btn-lg" type="button" id="copyPix"><i class="bi bi-copy me-2"></i>Copiar Pix Copia e Cola</button>
-                        <button class="btn btn-outline-secondary" type="button" id="copyKey"><i class="bi bi-key me-2"></i>Copiar chave Pix</button>
+                        <button class="btn btn-primary btn-lg" type="button" data-copy-pix><i class="bi bi-copy me-2"></i>Copiar Pix Copia e Cola</button>
+                        <button class="btn btn-outline-secondary" type="button" data-copy-key><i class="bi bi-key me-2"></i>Copiar chave Pix</button>
                     </div>
-                    <div class="pix-code text-start" id="pixCode"><?= e($pix) ?></div>
+                    <textarea class="form-control pix-code text-start" rows="4" readonly data-pix-code><?= e($pix) ?></textarea>
 
                     <div class="alert alert-info text-start mt-4 mb-0">
                         <i class="bi bi-info-circle me-2"></i>
@@ -76,19 +76,12 @@ require __DIR__ . '/partials/header.php';
 </main>
 
 <?php if ($order['status'] === 'pending' && $pix !== ''): ?>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script src="<?= e(url('/assets/vendor/qrcode.min.js')) ?>"></script>
+<script src="<?= e(url('/assets/js/pix-payment.js')) ?>"></script>
 <script>
-const pixPayload = <?= json_encode($pix, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) ?>;
-const pixKey = <?= json_encode($order['pix_key'], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) ?>;
-new QRCode(document.getElementById('qrcode'), {text: pixPayload, width:240, height:240, correctLevel:QRCode.CorrectLevel.M});
-
-document.getElementById('copyPix').addEventListener('click', async () => {
-    await navigator.clipboard.writeText(pixPayload);
-    document.getElementById('copyPix').innerHTML = '<i class="bi bi-check2 me-2"></i>Pix copiado';
-});
-document.getElementById('copyKey').addEventListener('click', async () => {
-    await navigator.clipboard.writeText(pixKey);
-    document.getElementById('copyKey').innerHTML = '<i class="bi bi-check2 me-2"></i>Chave copiada';
+PixPayment.init({
+    payload: <?= json_encode($pix, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) ?>,
+    key: <?= json_encode($order['pix_key'], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) ?>
 });
 </script>
 <?php endif; ?>
