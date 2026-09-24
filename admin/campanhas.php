@@ -45,9 +45,16 @@ require __DIR__ . '/partials/header.php';
                 <div class="col-6"><div class="text-secondary">Valor/número</div><strong><?= money($campaign['number_price']) ?></strong></div>
                 <div class="col-6"><div class="text-secondary">Total de números</div><strong><?= (int) $campaign['total_numbers'] ?></strong></div>
             </div>
-            <a class="btn btn-outline-primary w-100" href="<?= e(url('/admin/campanha.php?id=' . (int) $campaign['id'])) ?>">
-                <i class="bi bi-pencil-square me-2"></i>Abrir campanha
-            </a>
+            <div class="d-grid gap-2">
+                <a class="btn btn-outline-primary" href="<?= e(url('/admin/campanha.php?id=' . (int) $campaign['id'])) ?>">
+                    <i class="bi bi-pencil-square me-2"></i>Abrir campanha
+                </a>
+                <?php if ($campaign['status'] === 'active'): ?>
+                    <a class="btn btn-light border" target="_blank" rel="noopener" href="<?= e(url(campaign_path($campaign))) ?>">
+                        <i class="bi bi-box-arrow-up-right me-2"></i>Ver rifa pública
+                    </a>
+                <?php endif; ?>
+            </div>
         </div>
     </div>
     <?php endforeach; ?>
