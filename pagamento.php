@@ -69,7 +69,7 @@ require __DIR__ . '/partials/header.php';
 
             <div class="d-flex gap-2 justify-content-center flex-wrap mt-4">
                 <a class="btn btn-outline-primary" href="<?= e(url('/status.php?pedido=' . urlencode($token))) ?>">Ver status</a>
-                <a class="btn btn-light border" href="<?= e(url('/')) ?>">Voltar à campanha</a>
+                <a class="btn btn-light border" href="<?= e(url('/rifa/')) ?>">Voltar à rifa</a>
             </div>
         </div>
     </div>
