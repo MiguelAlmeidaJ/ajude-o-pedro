@@ -41,7 +41,7 @@ require __DIR__ . '/partials/header.php';
         <?php if ($order['status'] === 'pending'): ?>
             <a class="btn btn-primary" href="<?= e(url('/pagamento.php?pedido=' . urlencode($token))) ?>">Voltar ao pagamento</a>
         <?php else: ?>
-            <a class="btn btn-outline-primary" href="<?= e(url('/rifa/')) ?>">Voltar à rifa</a>
+            <a class="btn btn-outline-primary" href="<?= e(url(campaign_path((string) $order['campaign_slug']))) ?>">Voltar à rifa</a>
         <?php endif; ?>
     </div>
 </main>
