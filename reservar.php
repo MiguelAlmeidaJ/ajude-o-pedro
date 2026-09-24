@@ -3,7 +3,7 @@ declare(strict_types=1);
 require __DIR__ . '/app/bootstrap.php';
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    redirect('/');
+    redirect('/rifa/');
 }
 
 verify_csrf();
@@ -16,12 +16,12 @@ $numbers = $_POST['numbers'] ?? [];
 
 if ($name === '' || strlen($name) < 2 || strlen($phone) < 10) {
     flash('danger', 'Informe seu nome e um WhatsApp válido para continuar.');
-    redirect('/#numeros');
+    redirect('/rifa/#numeros');
 }
 
 if ($email && !filter_var($email, FILTER_VALIDATE_EMAIL)) {
     flash('danger', 'O e-mail informado não é válido.');
-    redirect('/#numeros');
+    redirect('/rifa/#numeros');
 }
 
 try {
@@ -30,5 +30,5 @@ try {
     redirect('/pagamento.php?pedido=' . urlencode($order['token']));
 } catch (Throwable $e) {
     flash('warning', $e->getMessage());
-    redirect('/#numeros');
+    redirect('/rifa/#numeros');
 }
