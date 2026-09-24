@@ -62,6 +62,9 @@ require __DIR__ . '/../partials/header.php';
                     <a class="btn btn-light btn-lg rounded-pill px-4 border" href="#historia">
                         <i class="bi bi-heart me-2"></i>Conhecer a história
                     </a>
+                    <a class="btn btn-outline-primary btn-lg rounded-pill px-4" href="#doar">
+                        <i class="bi bi-cash-heart me-2"></i>Doar sem comprar rifa
+                    </a>
                 </div>
 
                 <div class="soft-card p-3 p-md-4">
@@ -196,6 +199,73 @@ require __DIR__ . '/../partials/header.php';
                 </div>
             </div>
         </form>
+    </div>
+</section>
+
+<section class="py-5 bg-white border-top" id="doar">
+    <div class="container">
+        <div class="row g-4 g-lg-5 align-items-center">
+            <div class="col-lg-6">
+                <span class="section-kicker">Doação direta</span>
+                <h2 class="display-6 fw-bold mt-2 mb-3">Quer ajudar sem comprar um número?</h2>
+                <p class="lead-copy mb-3">
+                    Você também pode fazer uma contribuição de qualquer valor diretamente para a campanha.
+                </p>
+                <p class="text-secondary mb-0">
+                    Escolha o valor, gere o pagamento e use o QR Code ou Pix Copia e Cola. Sua ajuda vai para o mesmo objetivo da campanha.
+                </p>
+            </div>
+
+            <div class="col-lg-6">
+                <form method="post" action="<?= e(url('/gerar-doacao.php')) ?>" class="soft-card p-4 p-md-5" data-donation-form>
+                    <?= csrf_field() ?>
+                    <input type="hidden" name="campaign_id" value="<?= (int) $campaign['id'] ?>">
+
+                    <label class="form-label fw-semibold">Quanto você quer doar?</label>
+                    <div class="d-flex flex-wrap gap-2 mb-3">
+                        <?php foreach ([10, 20, 50, 100] as $preset): ?>
+                            <button class="btn btn-light border rounded-pill" type="button" data-donation-preset="<?= $preset ?>">
+                                <?= money($preset) ?>
+                            </button>
+                        <?php endforeach; ?>
+                    </div>
+
+                    <div class="input-group input-group-lg mb-3">
+                        <span class="input-group-text">R$</span>
+                        <input
+                            class="form-control"
+                            type="number"
+                            name="amount"
+                            min="1"
+                            max="100000"
+                            step="0.01"
+                            inputmode="decimal"
+                            placeholder="Outro valor"
+                            required
+                            data-donation-amount
+                        >
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Seu nome</label>
+                        <input class="form-control" name="name" maxlength="120" autocomplete="name" required>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label">WhatsApp <span class="text-secondary">(opcional)</span></label>
+                        <input class="form-control" name="phone" maxlength="30" inputmode="tel" autocomplete="tel" placeholder="(00) 00000-0000">
+                    </div>
+
+                    <button class="btn btn-primary btn-lg w-100">
+                        <i class="bi bi-qr-code me-2"></i>Gerar pagamento Pix
+                    </button>
+
+                    <p class="small text-secondary text-center mt-3 mb-0">
+                        Você receberá um link de pagamento que pode abrir novamente ou compartilhar.
+                    </p>
+                </form>
+            </div>
+        </div>
     </div>
 </section>
 
