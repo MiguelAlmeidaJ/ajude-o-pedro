@@ -1,7 +1,11 @@
 <?php
 declare(strict_types=1);
 
-$CONFIG = require __DIR__ . '/config.php';
+$configFile = file_exists(__DIR__ . '/config.local.php')
+    ? __DIR__ . '/config.local.php'
+    : __DIR__ . '/config.php';
+
+$CONFIG = require $configFile;
 
 date_default_timezone_set($CONFIG['app']['timezone'] ?? 'America/Sao_Paulo');
 
