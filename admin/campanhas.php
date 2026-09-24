@@ -6,7 +6,11 @@ require_login();
 $campaigns = db()->query(
     "SELECT c.*,
         (SELECT COUNT(*) FROM raffle_numbers rn WHERE rn.campaign_id=c.id AND rn.status='paid') sold,
-        (SELECT COALESCE(SUM(o.total_amount),0) FROM orders o WHERE o.campaign_id=c.id AND o.status='paid') raised
+        (
+            (SELECT COALESCE(SUM(o.total_amount),0) FROM orders o WHERE o.campaign_id=c.id AND o.status='paid')
+            +
+            (SELECT COALESCE(SUM(d.amount),0) FROM donations d WHERE d.campaign_id=c.id AND d.status='paid')
+        ) raised
      FROM campaigns c
      ORDER BY c.id DESC"
 )->fetchAll();
