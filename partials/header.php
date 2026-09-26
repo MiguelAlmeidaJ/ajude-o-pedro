@@ -1,5 +1,6 @@
 <?php
 $campaignForHeader = $campaignForHeader ?? null;
+$cssVersion = @filemtime(__DIR__ . '/../assets/css/app.css') ?: '1';
 ?><!doctype html>
 <html lang="pt-BR">
 <head>
@@ -11,7 +12,7 @@ $campaignForHeader = $campaignForHeader ?? null;
     <link rel="preconnect" href="https://cdn.jsdelivr.net">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
-    <link rel="stylesheet" href="<?= e(url('/assets/css/app.css')) ?>">
+    <link rel="stylesheet" href="<?= e(url('/assets/css/app.css')) ?>?v=<?= e((string) $cssVersion) ?>">
 </head>
 <body>
 <nav class="navbar navbar-expand-lg bg-white border-bottom sticky-top">
