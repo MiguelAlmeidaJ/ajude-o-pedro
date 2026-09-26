@@ -42,12 +42,11 @@ $campaign = [
     'pix_key' => '',
     'pix_receiver_name' => 'PEDRO',
     'pix_receiver_city' => '',
-    'hero_image' => 'assets/img/capa-rifa-pedro.webp',
+    'hero_image' => 'assets/img/pedro-familia.webp',
     'gallery_json' => json_encode([
         'assets/img/pedro-1.webp',
         'assets/img/pedro-2.webp',
         'assets/img/pedro-3.webp',
-        'assets/img/pedro-familia.webp',
     ], JSON_UNESCAPED_SLASHES),
     'whatsapp' => '',
     'instagram' => '',
@@ -108,12 +107,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if (!$errors) {
         try {
-            $data['hero_image'] = campaign_image_upload(
+            $previousHero = $data['hero_image'];
+            $newHero = campaign_image_upload(
                 'hero_upload',
                 $data['slug'],
                 'capa-rifa',
-                $data['hero_image'] ?: null
+                $previousHero ?: null
             ) ?? '';
+
+            if (
+                $newHero !== $previousHero &&
+                $previousHero !== '' &&
+                trim((string) $galleryItems[3]) === ''
+            ) {
+                $galleryItems[3] = $previousHero;
+            }
+
+            $data['hero_image'] = $newHero;
 
             for ($i = 0; $i < 4; $i++) {
                 $galleryItems[$i] = campaign_image_upload(
