@@ -6,6 +6,7 @@
     </div>
 </footer>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
-<script src="<?= e(url('/assets/js/app.js')) ?>"></script>
+<?php $appJsVersion = @filemtime(__DIR__ . '/../assets/js/app.js') ?: '1'; ?>
+<script src="<?= e(url('/assets/js/app.js')) ?>?v=<?= e((string) $appJsVersion) ?>"></script>
 </body>
 </html>
