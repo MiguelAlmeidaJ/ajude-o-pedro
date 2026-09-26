@@ -42,8 +42,13 @@ $campaign = [
     'pix_key' => '',
     'pix_receiver_name' => 'PEDRO',
     'pix_receiver_city' => '',
-    'hero_image' => 'assets/img/pedro-familia.webp',
-    'gallery_json' => json_encode(['assets/img/pedro-1.webp','assets/img/pedro-2.webp','assets/img/pedro-3.webp']),
+    'hero_image' => 'assets/img/capa-rifa-pedro.webp',
+    'gallery_json' => json_encode([
+        'assets/img/pedro-1.webp',
+        'assets/img/pedro-2.webp',
+        'assets/img/pedro-3.webp',
+        'assets/img/pedro-familia.webp',
+    ], JSON_UNESCAPED_SLASHES),
     'whatsapp' => '',
     'instagram' => '',
     'draw_date' => '',
@@ -59,6 +64,9 @@ if ($id > 0) {
         exit('Campanha não encontrada.');
     }
 }
+
+$galleryItems = json_decode($campaign['gallery_json'] ?: '[]', true) ?: [];
+$galleryItems = array_pad(array_slice(array_values($galleryItems), 0, 4), 4, '');
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     verify_csrf();
@@ -81,9 +89,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         'status' => (string) ($_POST['status'] ?? 'draft'),
     ];
 
-    $galleryLines = preg_split('/\R+/', (string) ($_POST['gallery'] ?? '')) ?: [];
-    $galleryLines = array_values(array_filter(array_map('trim', $galleryLines)));
-    $galleryJson = json_encode($galleryLines, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+    $postedGallery = $_POST['gallery_existing'] ?? [];
+    $postedGallery = is_array($postedGallery) ? $postedGallery : [];
+    $galleryItems = array_pad(
+        array_slice(array_map(static fn($value) => trim((string) $value), $postedGallery), 0, 4),
+        4,
+        ''
+    );
 
     $errors = [];
     if ($data['title'] === '') $errors[] = 'Informe o título.';
@@ -93,6 +105,31 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($data['status'] === 'active' && ($data['pix_key'] === '' || $data['pix_receiver_name'] === '' || $data['pix_receiver_city'] === '')) {
         $errors[] = 'Para ativar a campanha, configure chave Pix, nome do recebedor e cidade.';
     }
+
+    if (!$errors) {
+        try {
+            $data['hero_image'] = campaign_image_upload(
+                'hero_upload',
+                $data['slug'],
+                'capa-rifa',
+                $data['hero_image'] ?: null
+            ) ?? '';
+
+            for ($i = 0; $i < 4; $i++) {
+                $galleryItems[$i] = campaign_image_upload(
+                    'gallery_upload_' . $i,
+                    $data['slug'],
+                    'galeria-' . ($i + 1),
+                    $galleryItems[$i] ?: null
+                ) ?? '';
+            }
+        } catch (RuntimeException $e) {
+            $errors[] = $e->getMessage();
+        }
+    }
+
+    $galleryToSave = array_values(array_filter($galleryItems, static fn($path) => trim((string) $path) !== ''));
+    $galleryJson = json_encode($galleryToSave, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
 
     if ($errors) {
         foreach ($errors as $error) flash('danger', $error);
@@ -159,7 +196,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
-$gallery = implode("\n", json_decode($campaign['gallery_json'] ?: '[]', true) ?: []);
+$galleryItems = json_decode($campaign['gallery_json'] ?: '[]', true) ?: $galleryItems;
+$galleryItems = array_pad(array_slice(array_values($galleryItems), 0, 4), 4, '');
+
 $pageTitle = ($id ? 'Editar' : 'Nova') . ' campanha • Painel';
 require __DIR__ . '/partials/header.php';
 ?>
@@ -167,11 +206,11 @@ require __DIR__ . '/partials/header.php';
     <a class="btn btn-light border" href="<?= e(url('/admin/campanhas.php')) ?>"><i class="bi bi-arrow-left"></i></a>
     <div>
         <h1 class="h3 fw-bold mb-1"><?= $id ? 'Editar campanha' : 'Nova campanha' ?></h1>
-        <p class="text-secondary mb-0"><?= $id ? 'Ajuste conteúdo, Pix, valores e disponibilidade.' : 'Crie uma nova campanha solidária.' ?></p>
+        <p class="text-secondary mb-0"><?= $id ? 'Ajuste conteúdo, imagens, Pix, valores e disponibilidade.' : 'Crie uma nova campanha solidária.' ?></p>
     </div>
 </div>
 
-<form method="post" class="row g-4">
+<form method="post" enctype="multipart/form-data" class="row g-4">
     <?= csrf_field() ?>
     <input type="hidden" name="id" value="<?= (int) $campaign['id'] ?>">
 
@@ -197,14 +236,55 @@ require __DIR__ . '/partials/header.php';
         </div>
 
         <div class="admin-card p-4 mb-4">
-            <h2 class="h5 fw-bold mb-3">Imagens</h2>
-            <div class="mb-3">
-                <label class="form-label">Imagem principal</label>
-                <input class="form-control" name="hero_image" value="<?= e($campaign['hero_image']) ?>" placeholder="assets/img/pedro-familia.webp">
+            <div class="d-flex flex-wrap justify-content-between gap-2 align-items-start mb-4">
+                <div>
+                    <h2 class="h5 fw-bold mb-1">Imagens da rifa</h2>
+                    <p class="text-secondary small mb-0">A capa aparece no topo. As quatro fotos formam o mosaico da história.</p>
+                </div>
+                <span class="badge text-bg-light border">JPG, PNG ou WebP • até 8 MB</span>
             </div>
-            <div>
-                <label class="form-label">Galeria <span class="text-secondary">(uma imagem por linha)</span></label>
-                <textarea class="form-control font-monospace" name="gallery" rows="5"><?= e($gallery) ?></textarea>
+
+            <input type="hidden" name="hero_image" value="<?= e((string) $campaign['hero_image']) ?>">
+
+            <div class="campaign-image-editor campaign-image-editor-cover mb-4">
+                <div class="campaign-image-preview campaign-image-preview-cover">
+                    <?php if (!empty($campaign['hero_image'])): ?>
+                        <img src="<?= e(url('/' . ltrim((string) $campaign['hero_image'], '/'))) ?>" alt="Capa atual da rifa">
+                    <?php else: ?>
+                        <div class="campaign-image-empty"><i class="bi bi-image"></i><span>Sem capa</span></div>
+                    <?php endif; ?>
+                </div>
+                <div>
+                    <label class="form-label fw-semibold">Capa da rifa / imagem principal</label>
+                    <p class="small text-secondary">Use aqui a arte com os prêmios. Ela será exibida inteira, sem corte.</p>
+                    <input class="form-control" type="file" name="hero_upload" accept="image/jpeg,image/png,image/webp">
+                    <?php if (!empty($campaign['hero_image'])): ?>
+                        <div class="form-text text-break">Atual: <?= e((string) $campaign['hero_image']) ?></div>
+                    <?php endif; ?>
+                </div>
+            </div>
+
+            <h3 class="h6 fw-bold mb-3">Mosaico da história</h3>
+            <div class="row g-3">
+                <?php for ($i = 0; $i < 4; $i++): ?>
+                    <div class="col-md-6">
+                        <div class="campaign-image-editor h-100">
+                            <input type="hidden" name="gallery_existing[]" value="<?= e((string) $galleryItems[$i]) ?>">
+                            <div class="campaign-image-preview">
+                                <?php if (!empty($galleryItems[$i])): ?>
+                                    <img src="<?= e(url('/' . ltrim((string) $galleryItems[$i], '/'))) ?>" alt="Foto <?= $i + 1 ?> da campanha">
+                                <?php else: ?>
+                                    <div class="campaign-image-empty"><i class="bi bi-image"></i><span>Foto <?= $i + 1 ?></span></div>
+                                <?php endif; ?>
+                            </div>
+                            <div>
+                                <label class="form-label fw-semibold">Foto <?= $i + 1 ?></label>
+                                <input class="form-control form-control-sm" type="file" name="gallery_upload_<?= $i ?>" accept="image/jpeg,image/png,image/webp">
+                                <div class="form-text">Envie uma nova imagem apenas se quiser substituir esta posição.</div>
+                            </div>
+                        </div>
+                    </div>
+                <?php endfor; ?>
             </div>
         </div>
 
