@@ -89,11 +89,8 @@ require __DIR__ . '/../partials/header.php';
             </div>
 
             <div class="col-lg-6">
-                <div class="hero-photo">
-                    <img src="<?= e(url('/' . ltrim((string) $campaign['hero_image'], '/'))) ?>" alt="Pedro com sua família">
-                    <div class="hero-badge">
-                        <i class="bi bi-heart-pulse-fill text-primary me-2"></i><strong>Ajude o Pedro</strong>
-                    </div>
+                <div class="hero-photo hero-raffle-cover">
+                    <img src="<?= e(url('/' . ltrim((string) $campaign['hero_image'], '/'))) ?>" alt="Capa oficial da rifa">
                 </div>
             </div>
         </div>
@@ -111,10 +108,11 @@ require __DIR__ . '/../partials/header.php';
 
             <div class="col-lg-5">
                 <div class="row g-3">
-                    <?php foreach (array_slice($gallery, 0, 3) as $image): ?>
-                    <div class="<?= count($gallery) > 1 ? 'col-6' : 'col-12' ?>">
-                        <img class="gallery-img" src="<?= e(url('/' . ltrim((string) $image, '/'))) ?>" alt="Pedro">
-                    </div>
+                    <?php foreach (array_slice($gallery, 0, 4) as $index => $image): ?>
+                        <?php if (trim((string) $image) === '') continue; ?>
+                        <div class="col-6">
+                            <img class="gallery-img" src="<?= e(url('/' . ltrim((string) $image, '/'))) ?>" alt="Foto <?= (int) $index + 1 ?> da história do Pedro">
+                        </div>
                     <?php endforeach; ?>
                 </div>
             </div>
