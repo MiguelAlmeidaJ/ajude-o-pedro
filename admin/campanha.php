@@ -314,7 +314,10 @@ require __DIR__ . '/partials/header.php';
                     <input class="form-control" name="pix_receiver_city" maxlength="15" value="<?= e($campaign['pix_receiver_city']) ?>">
                 </div>
             </div>
-            <div class="form-text mt-2">O sistema monta o Pix Copia e Cola e o QR Code com o valor exato da compra.</div>
+            <div class="form-text mt-2">
+                O sistema monta o Pix Copia e Cola e o QR Code com o valor exato da compra.
+                Chaves de celular são convertidas automaticamente para o padrão internacional +55.
+            </div>
         </div>
     </div>
 
