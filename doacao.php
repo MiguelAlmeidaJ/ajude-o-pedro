@@ -44,7 +44,7 @@ $paymentLink = $host !== '' ? $scheme . '://' . $host . $paymentPath : $paymentP
                         <strong><?= e($donation['campaign_title']) ?></strong>.
                     </p>
 
-                    <div id="qrcode" class="qr-box my-4"></div>
+                    <div class="qr-box my-4" data-qr-code aria-label="QR Code Pix"></div>
 
                     <div class="d-grid gap-2 mb-3">
                         <button class="btn btn-primary btn-lg" type="button" data-copy-pix>
@@ -99,8 +99,12 @@ $paymentLink = $host !== '' ? $scheme . '://' . $host . $paymentPath : $paymentP
 </main>
 
 <?php if ($donation['status'] === 'pending' && $pix !== ''): ?>
-<script src="<?= e(url('/assets/vendor/qrcode.min.js')) ?>"></script>
-<script src="<?= e(url('/assets/js/pix-payment.js')) ?>"></script>
+<?php
+$qrcodeVersion = @filemtime(__DIR__ . '/assets/vendor/qrcode.min.js') ?: '1';
+$pixJsVersion = @filemtime(__DIR__ . '/assets/js/pix-payment.js') ?: '1';
+?>
+<script src="<?= e(url('/assets/vendor/qrcode.min.js')) ?>?v=<?= e((string) $qrcodeVersion) ?>"></script>
+<script src="<?= e(url('/assets/js/pix-payment.js')) ?>?v=<?= e((string) $pixJsVersion) ?>"></script>
 <script>
 PixPayment.init({
     payload: <?= json_encode($pix, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) ?>,
