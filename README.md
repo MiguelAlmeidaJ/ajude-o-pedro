@@ -6,7 +6,7 @@ Sistema de rifa online feito em PHP + MySQL, pensado para hospedagem compartilha
 
 - Página pública responsiva com história, progresso, galeria e seleção de números.
 - Reserva transacional para impedir duas pessoas de pegarem o mesmo número ao mesmo tempo.
-- Reserva temporária de 30 minutos e liberação automática de números expirados.
+- Reserva dos números até confirmação ou cancelamento manual pelo painel.
 - Pagamento por Pix com QR Code, Pix Copia e Cola e botão para copiar a chave.
 - Confirmação manual do Pix pelo painel.
 - Painel em `/admin`.
@@ -63,7 +63,7 @@ Você pode subir as imagens nesses caminhos ou trocar os caminhos no editor da c
 5. O participante paga usando QR Code ou Pix Copia e Cola.
 6. A equipe confere o recebimento e clica em **Confirmar** no painel.
 7. Os números passam de reservados para pagos.
-8. Se a reserva expirar sem confirmação, os números ficam disponíveis novamente.
+8. Se o pagamento não for identificado, a equipe cancela manualmente a reserva e os números ficam disponíveis novamente.
 
 ## Observação sobre o Pix
 
