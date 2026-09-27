@@ -33,7 +33,7 @@ require __DIR__ . '/partials/header.php';
                     <h1 class="h2 fw-bold mt-2">Finalize sua participação</h1>
                     <p class="text-secondary">Seu total é <strong><?= money($order['total_amount']) ?></strong>. A reserva vale até <strong><?= e(date('H:i', strtotime($order['reserved_until']))) ?></strong>.</p>
 
-                    <div id="qrcode" class="qr-box my-4"></div>
+                    <div class="qr-box my-4" data-qr-code aria-label="QR Code Pix"></div>
 
                     <div class="d-grid gap-2 mb-3">
                         <button class="btn btn-primary btn-lg" type="button" data-copy-pix><i class="bi bi-copy me-2"></i>Copiar Pix Copia e Cola</button>
@@ -76,8 +76,12 @@ require __DIR__ . '/partials/header.php';
 </main>
 
 <?php if ($order['status'] === 'pending' && $pix !== ''): ?>
-<script src="<?= e(url('/assets/vendor/qrcode.min.js')) ?>"></script>
-<script src="<?= e(url('/assets/js/pix-payment.js')) ?>"></script>
+<?php
+$qrcodeVersion = @filemtime(__DIR__ . '/assets/vendor/qrcode.min.js') ?: '1';
+$pixJsVersion = @filemtime(__DIR__ . '/assets/js/pix-payment.js') ?: '1';
+?>
+<script src="<?= e(url('/assets/vendor/qrcode.min.js')) ?>?v=<?= e((string) $qrcodeVersion) ?>"></script>
+<script src="<?= e(url('/assets/js/pix-payment.js')) ?>?v=<?= e((string) $pixJsVersion) ?>"></script>
 <script>
 PixPayment.init({
     payload: <?= json_encode($pix, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) ?>,
