@@ -38,7 +38,7 @@ if ($search !== '') {
     }
 
     $one = db()->prepare(
-        "SELECT number
+        "SELECT number,status
          FROM raffle_numbers
          WHERE campaign_id = ?
            AND number = ?
@@ -75,7 +75,7 @@ $page = min($page, $pages);
 $offset = ($page - 1) * $perPage;
 
 $list = db()->prepare(
-    "SELECT number
+    "SELECT number,status
      FROM raffle_numbers
      WHERE campaign_id = ?
        AND status = 'available'
