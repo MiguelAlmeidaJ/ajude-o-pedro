@@ -14,8 +14,9 @@ cleanup_expired_reservations((int) $order['campaign_id']);
 $order = order_by_token($token);
 $numbers = order_numbers((int) $order['id']);
 $txid = 'PEDRO' . str_pad((string) $order['id'], 8, '0', STR_PAD_LEFT);
-$pix = ($order['status'] === 'pending' && trim((string) $order['pix_key']) !== '')
-    ? pix_payload($order['pix_key'], $order['pix_receiver_name'], $order['pix_receiver_city'], (float) $order['total_amount'], $txid)
+$normalizedPixKey = pix_normalize_key((string) $order['pix_key']);
+$pix = ($order['status'] === 'pending' && $normalizedPixKey !== '')
+    ? pix_payload($normalizedPixKey, $order['pix_receiver_name'], $order['pix_receiver_city'], (float) $order['total_amount'], $txid)
     : '';
 
 $pageTitle = 'Pagamento via Pix • Ajude o Pedro';
@@ -85,7 +86,7 @@ $pixJsVersion = @filemtime(__DIR__ . '/assets/js/pix-payment.js') ?: '1';
 <script>
 PixPayment.init({
     payload: <?= json_encode($pix, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) ?>,
-    key: <?= json_encode($order['pix_key'], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) ?>
+    key: <?= json_encode($normalizedPixKey, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) ?>
 });
 </script>
 <?php endif; ?>
