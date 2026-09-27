@@ -10,8 +10,6 @@ if (!$order) {
     exit('Pedido não encontrado.');
 }
 
-cleanup_expired_reservations((int) $order['campaign_id']);
-$order = order_by_token($token);
 $numbers = order_numbers((int) $order['id']);
 $txid = 'PEDRO' . str_pad((string) $order['id'], 8, '0', STR_PAD_LEFT);
 $normalizedPixKey = pix_normalize_key((string) $order['pix_key']);
@@ -32,7 +30,7 @@ require __DIR__ . '/partials/header.php';
                 <?php else: ?>
                     <span class="section-kicker">Pagamento por Pix</span>
                     <h1 class="h2 fw-bold mt-2">Finalize sua participação</h1>
-                    <p class="text-secondary">Seu total é <strong><?= money($order['total_amount']) ?></strong>. A reserva vale até <strong><?= e(date('H:i', strtotime($order['reserved_until']))) ?></strong>.</p>
+                    <p class="text-secondary">Seu total é <strong><?= money($order['total_amount']) ?></strong>. Seus números ficarão reservados até a confirmação ou o cancelamento manual do pagamento.</p>
 
                     <div class="qr-box my-4" data-qr-code aria-label="QR Code Pix"></div>
 
@@ -44,7 +42,7 @@ require __DIR__ . '/partials/header.php';
 
                     <div class="alert alert-info text-start mt-4 mb-0">
                         <i class="bi bi-info-circle me-2"></i>
-                        Depois do pagamento, a equipe confere o Pix e confirma seus números no painel.
+                        Depois do pagamento, seus números continuam reservados até a equipe conferir o Pix e confirmar a participação no painel.
                     </div>
                 <?php endif; ?>
             <?php elseif ($order['status'] === 'paid'): ?>
