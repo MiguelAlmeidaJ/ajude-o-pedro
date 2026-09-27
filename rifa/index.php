@@ -19,7 +19,6 @@ if ($slug === '') {
 }
 
 if ($campaign) {
-    cleanup_expired_reservations((int) $campaign['id']);
     $stats = campaign_stats((int) $campaign['id']);
     $gallery = json_decode($campaign['gallery_json'] ?: '[]', true) ?: [];
     $digits = max(3, strlen((string) $campaign['total_numbers']));
