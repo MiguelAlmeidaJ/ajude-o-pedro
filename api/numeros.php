@@ -20,8 +20,6 @@ if (!$campaign || $campaign['status'] !== 'active') {
     exit;
 }
 
-cleanup_expired_reservations($campaignId);
-
 if ($search !== '') {
     $number = (int) preg_replace('/\D+/', '', $search);
     if ($number < 1 || $number > (int) $campaign['total_numbers']) {
