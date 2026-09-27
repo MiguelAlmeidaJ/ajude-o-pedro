@@ -10,15 +10,13 @@ if (!$order) {
     exit('Pedido não encontrado.');
 }
 
-cleanup_expired_reservations((int) $order['campaign_id']);
-$order = order_by_token($token);
 $numbers = order_numbers((int) $order['id']);
 
 $labels = [
     'pending' => ['warning', 'Aguardando confirmação do Pix', 'clock-history'],
     'paid' => ['success', 'Pagamento confirmado', 'check-circle-fill'],
     'cancelled' => ['secondary', 'Reserva cancelada', 'x-circle'],
-    'expired' => ['secondary', 'Reserva expirada', 'hourglass-bottom'],
+    'expired' => ['secondary', 'Reserva expirada (registro antigo)', 'hourglass-bottom'],
 ];
 [$color, $label, $icon] = $labels[$order['status']] ?? ['secondary', 'Status desconhecido', 'question-circle'];
 
