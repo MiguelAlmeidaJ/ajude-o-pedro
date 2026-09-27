@@ -127,7 +127,7 @@ require __DIR__ . '/../partials/header.php';
             <h2 class="display-6 fw-bold mt-2">Escolha seus números</h2>
             <p class="text-secondary">
                 Cada número custa <?= money($campaign['number_price']) ?>.
-                Os números ficam reservados por <?= (int) config('app.reservation_minutes', 30) ?> minutos enquanto você realiza o Pix.
+                Depois da reserva, os números ficam separados para você até a equipe confirmar ou cancelar o pagamento.
             </p>
         </div>
 
