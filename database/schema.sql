@@ -42,7 +42,7 @@ CREATE TABLE IF NOT EXISTS orders (
     customer_email VARCHAR(190) NULL,
     total_amount DECIMAL(10,2) NOT NULL,
     status ENUM('pending','paid','cancelled','expired') NOT NULL DEFAULT 'pending',
-    reserved_until DATETIME NOT NULL,
+    reserved_until DATETIME NULL,
     payment_reference VARCHAR(80) NULL,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     paid_at DATETIME NULL,
