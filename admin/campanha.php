@@ -67,6 +67,8 @@ if ($id > 0) {
 $galleryItems = json_decode($campaign['gallery_json'] ?: '[]', true) ?: [];
 $galleryItems = array_pad(array_slice(array_values($galleryItems), 0, 4), 4, '');
 
+$canEditSettings = is_dev();
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     verify_csrf();
 
@@ -75,17 +77,27 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         'slug' => slugify((string) ($_POST['slug'] ?? '')),
         'subtitle' => trim((string) ($_POST['subtitle'] ?? '')),
         'story' => trim((string) ($_POST['story'] ?? '')),
-        'goal_amount' => max(0, (float) str_replace(',', '.', (string) ($_POST['goal_amount'] ?? 0))),
-        'number_price' => (float) str_replace(',', '.', (string) ($_POST['number_price'] ?? 0)),
-        'total_numbers' => (int) ($_POST['total_numbers'] ?? 0),
+        'goal_amount' => $canEditSettings
+            ? max(0, (float) str_replace(',', '.', (string) ($_POST['goal_amount'] ?? 0)))
+            : (float) $campaign['goal_amount'],
+        'number_price' => $canEditSettings
+            ? (float) str_replace(',', '.', (string) ($_POST['number_price'] ?? 0))
+            : (float) $campaign['number_price'],
+        'total_numbers' => $canEditSettings
+            ? (int) ($_POST['total_numbers'] ?? 0)
+            : (int) $campaign['total_numbers'],
         'pix_key' => trim((string) ($_POST['pix_key'] ?? '')),
         'pix_receiver_name' => pix_ascii((string) ($_POST['pix_receiver_name'] ?? ''), 25),
         'pix_receiver_city' => pix_ascii((string) ($_POST['pix_receiver_city'] ?? ''), 15),
         'hero_image' => trim((string) ($_POST['hero_image'] ?? '')),
         'whatsapp' => trim((string) ($_POST['whatsapp'] ?? '')),
         'instagram' => trim((string) ($_POST['instagram'] ?? '')),
-        'draw_date' => trim((string) ($_POST['draw_date'] ?? '')) ?: null,
-        'status' => (string) ($_POST['status'] ?? 'draft'),
+        'draw_date' => $canEditSettings
+            ? (trim((string) ($_POST['draw_date'] ?? '')) ?: null)
+            : ($campaign['draw_date'] ?: null),
+        'status' => $canEditSettings
+            ? (string) ($_POST['status'] ?? 'draft')
+            : (string) $campaign['status'],
     ];
 
     $postedGallery = $_POST['gallery_existing'] ?? [];
@@ -184,7 +196,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $campaignId = (int) $pdo->lastInsertId();
             }
 
-            if ($data['status'] === 'active') {
+            if ($canEditSettings && $data['status'] === 'active') {
                 $close = $pdo->prepare(
                     "UPDATE campaigns
                      SET status = 'closed'
@@ -323,27 +335,39 @@ require __DIR__ . '/partials/header.php';
 
     <div class="col-xl-4">
         <div class="admin-card p-4 mb-4">
-            <h2 class="h5 fw-bold mb-3">Configurações</h2>
+            <div class="d-flex align-items-center justify-content-between gap-2 mb-3">
+                <h2 class="h5 fw-bold mb-0">Configurações</h2>
+                <?php if (!$canEditSettings): ?>
+                    <span class="badge text-bg-light border">
+                        <i class="bi bi-lock-fill me-1"></i>Somente DEV
+                    </span>
+                <?php endif; ?>
+            </div>
+            <?php if (!$canEditSettings): ?>
+                <div class="alert alert-light border small py-2 px-3 mb-3">
+                    Estes dados são definidos pelo usuário DEV e estão bloqueados para o perfil ADMIN.
+                </div>
+            <?php endif; ?>
             <div class="mb-3">
                 <label class="form-label">Valor por número</label>
-                <div class="input-group"><span class="input-group-text">R$</span><input class="form-control" name="number_price" value="<?= e((string) $campaign['number_price']) ?>" required></div>
+                <div class="input-group"><span class="input-group-text">R$</span><input class="form-control" name="number_price" value="<?= e((string) $campaign['number_price']) ?>" <?= $canEditSettings ? 'required' : 'disabled' ?>></div>
             </div>
             <div class="mb-3">
                 <label class="form-label">Quantidade de números</label>
-                <input class="form-control" type="number" min="1" max="10000" name="total_numbers" value="<?= (int) $campaign['total_numbers'] ?>" required>
+                <input class="form-control" type="number" min="1" max="10000" name="total_numbers" value="<?= (int) $campaign['total_numbers'] ?>" <?= $canEditSettings ? 'required' : 'disabled' ?>>
             </div>
             <div class="mb-3">
                 <label class="form-label">Meta de arrecadação</label>
-                <div class="input-group"><span class="input-group-text">R$</span><input class="form-control" name="goal_amount" value="<?= e((string) $campaign['goal_amount']) ?>"></div>
+                <div class="input-group"><span class="input-group-text">R$</span><input class="form-control" name="goal_amount" value="<?= e((string) $campaign['goal_amount']) ?>" <?= $canEditSettings ? '' : 'disabled' ?>></div>
                 <div class="form-text">Use 0 para acompanhar pelo total de números vendidos.</div>
             </div>
             <div class="mb-3">
                 <label class="form-label">Data do sorteio</label>
-                <input class="form-control" type="date" name="draw_date" value="<?= e((string) $campaign['draw_date']) ?>">
+                <input class="form-control" type="date" name="draw_date" value="<?= e((string) $campaign['draw_date']) ?>" <?= $canEditSettings ? '' : 'disabled' ?>>
             </div>
             <div>
                 <label class="form-label">Status</label>
-                <select class="form-select" name="status">
+                <select class="form-select" name="status" <?= $canEditSettings ? '' : 'disabled' ?>>
                     <?php foreach (['draft'=>'Rascunho','active'=>'Ativa','closed'=>'Encerrada'] as $value=>$label): ?>
                         <option value="<?= e($value) ?>" <?= $campaign['status']===$value?'selected':'' ?>><?= e($label) ?></option>
                     <?php endforeach; ?>
