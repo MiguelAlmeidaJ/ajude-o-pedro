@@ -138,8 +138,7 @@ require __DIR__ . '/../partials/header.php';
                 <div class="soft-card p-3 p-md-4">
                     <div class="number-toolbar mb-3">
                         <div class="d-flex flex-wrap gap-3 small">
-                            <span><i class="bi bi-square text-primary"></i> Disponível</span>
-                            <span><i class="bi bi-square-fill text-secondary opacity-50"></i> Reservado/vendido</span>
+                            <span><i class="bi bi-check2-square text-primary"></i> Somente números disponíveis são exibidos</span>
                         </div>
 
                         <div class="input-group number-search">
