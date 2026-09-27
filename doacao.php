@@ -11,9 +11,10 @@ if (!$donation) {
 }
 
 $txid = 'DOACAO' . str_pad((string) $donation['id'], 8, '0', STR_PAD_LEFT);
-$pix = ($donation['status'] === 'pending' && trim((string) $donation['pix_key']) !== '')
+$normalizedPixKey = pix_normalize_key((string) $donation['pix_key']);
+$pix = ($donation['status'] === 'pending' && $normalizedPixKey !== '')
     ? pix_payload(
-        $donation['pix_key'],
+        $normalizedPixKey,
         $donation['pix_receiver_name'],
         $donation['pix_receiver_city'],
         (float) $donation['amount'],
@@ -108,7 +109,7 @@ $pixJsVersion = @filemtime(__DIR__ . '/assets/js/pix-payment.js') ?: '1';
 <script>
 PixPayment.init({
     payload: <?= json_encode($pix, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) ?>,
-    key: <?= json_encode($donation['pix_key'], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) ?>,
+    key: <?= json_encode($normalizedPixKey, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) ?>,
     link: <?= json_encode($paymentLink, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) ?>
 });
 </script>
