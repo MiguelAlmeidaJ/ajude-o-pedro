@@ -2,8 +2,6 @@
 declare(strict_types=1);
 require __DIR__ . '/../app/bootstrap.php';
 require_login();
-cleanup_expired_reservations();
-
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     verify_csrf();
     $orderId = (int) ($_POST['order_id'] ?? 0);
@@ -79,7 +77,7 @@ require __DIR__ . '/partials/header.php';
             <label class="form-label small">Status</label>
             <select class="form-select" name="status">
                 <option value="">Todos</option>
-                <?php foreach (['pending'=>'Aguardando','paid'=>'Pago','cancelled'=>'Cancelado','expired'=>'Expirado'] as $v=>$label): ?>
+                <?php foreach (['pending'=>'Aguardando aprovação','paid'=>'Pago','cancelled'=>'Cancelado'] as $v=>$label): ?>
                     <option value="<?= e($v) ?>" <?= $status===$v?'selected':'' ?>><?= e($label) ?></option>
                 <?php endforeach; ?>
             </select>
@@ -104,8 +102,11 @@ require __DIR__ . '/partials/header.php';
                 <td style="max-width:260px"><span class="small"><?= e((string) $order['numbers']) ?></span></td>
                 <td><strong><?= money($order['total_amount']) ?></strong></td>
                 <td>
-                    <?php $badge=['pending'=>'warning','paid'=>'success','cancelled'=>'secondary','expired'=>'secondary'][$order['status']]??'secondary'; ?>
-                    <span class="badge text-bg-<?= e($badge) ?>"><?= e($order['status']) ?></span>
+                    <?php
+                    $badge = ['pending'=>'warning','paid'=>'success','cancelled'=>'secondary','expired'=>'secondary'][$order['status']] ?? 'secondary';
+                    $statusLabel = ['pending'=>'Aguardando aprovação','paid'=>'Pago','cancelled'=>'Cancelado','expired'=>'Expirado (legado)'][$order['status']] ?? $order['status'];
+                    ?>
+                    <span class="badge text-bg-<?= e($badge) ?>"><?= e($statusLabel) ?></span>
                 </td>
                 <td><span class="small"><?= e(date('d/m/Y H:i', strtotime($order['created_at']))) ?></span></td>
                 <td class="text-end">
