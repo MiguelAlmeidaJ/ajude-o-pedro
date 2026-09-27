@@ -134,43 +134,9 @@ function active_campaign(): ?array
 
 function cleanup_expired_reservations(?int $campaignId = null): void
 {
-    $pdo = db();
-    $pdo->beginTransaction();
-
-    try {
-        $sql = "SELECT id FROM orders WHERE status = 'pending' AND reserved_until < NOW()";
-        $params = [];
-        if ($campaignId !== null) {
-            $sql .= " AND campaign_id = ?";
-            $params[] = $campaignId;
-        }
-        $sql .= " FOR UPDATE";
-
-        $q = $pdo->prepare($sql);
-        $q->execute($params);
-        $orderIds = array_map('intval', array_column($q->fetchAll(), 'id'));
-
-        if ($orderIds) {
-            $marks = implode(',', array_fill(0, count($orderIds), '?'));
-
-            $u1 = $pdo->prepare(
-                "UPDATE raffle_numbers
-                 SET status = 'available', order_id = NULL, reserved_until = NULL
-                 WHERE order_id IN ($marks) AND status = 'reserved'"
-            );
-            $u1->execute($orderIds);
-
-            $u2 = $pdo->prepare("UPDATE orders SET status = 'expired' WHERE id IN ($marks)");
-            $u2->execute($orderIds);
-        }
-
-        $pdo->commit();
-    } catch (Throwable $e) {
-        if ($pdo->inTransaction()) {
-            $pdo->rollBack();
-        }
-        throw $e;
-    }
+    // Mantida por compatibilidade com versões anteriores.
+    // Reservas não expiram mais automaticamente: permanecem pendentes
+    // até confirmação ou cancelamento manual no painel.
 }
 
 function order_by_token(string $token): ?array
