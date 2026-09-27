@@ -22,21 +22,29 @@ if (!$campaign || $campaign['status'] !== 'active') {
 
 if ($search !== '') {
     $number = (int) preg_replace('/\D+/', '', $search);
+
     if ($number < 1 || $number > (int) $campaign['total_numbers']) {
         echo json_encode([
             'ok' => true,
             'items' => [],
             'page' => 1,
             'pages' => 1,
-            'total' => (int) $campaign['total_numbers'],
+            'available_total' => 0,
             'from' => 0,
             'to' => 0,
             'search' => true,
-        ]);
+        ], JSON_UNESCAPED_UNICODE);
         exit;
     }
 
-    $one = db()->prepare("SELECT number,status FROM raffle_numbers WHERE campaign_id = ? AND number = ? LIMIT 1");
+    $one = db()->prepare(
+        "SELECT number
+         FROM raffle_numbers
+         WHERE campaign_id = ?
+           AND number = ?
+           AND status = 'available'
+         LIMIT 1"
+    );
     $one->execute([$campaignId, $number]);
     $item = $one->fetch();
 
@@ -45,7 +53,7 @@ if ($search !== '') {
         'items' => $item ? [$item] : [],
         'page' => 1,
         'pages' => 1,
-        'total' => (int) $campaign['total_numbers'],
+        'available_total' => $item ? 1 : 0,
         'from' => $item ? $number : 0,
         'to' => $item ? $number : 0,
         'search' => true,
@@ -53,15 +61,24 @@ if ($search !== '') {
     exit;
 }
 
-$total = (int) $campaign['total_numbers'];
-$pages = max(1, (int) ceil($total / $perPage));
+$count = db()->prepare(
+    "SELECT COUNT(*)
+     FROM raffle_numbers
+     WHERE campaign_id = ?
+       AND status = 'available'"
+);
+$count->execute([$campaignId]);
+$availableTotal = (int) $count->fetchColumn();
+
+$pages = max(1, (int) ceil($availableTotal / $perPage));
 $page = min($page, $pages);
 $offset = ($page - 1) * $perPage;
 
 $list = db()->prepare(
-    "SELECT number,status
+    "SELECT number
      FROM raffle_numbers
      WHERE campaign_id = ?
+       AND status = 'available'
      ORDER BY number
      LIMIT ? OFFSET ?"
 );
@@ -76,7 +93,7 @@ echo json_encode([
     'items' => $items,
     'page' => $page,
     'pages' => $pages,
-    'total' => $total,
+    'available_total' => $availableTotal,
     'from' => $items ? (int) $items[0]['number'] : 0,
     'to' => $items ? (int) $items[count($items) - 1]['number'] : 0,
     'search' => false,
