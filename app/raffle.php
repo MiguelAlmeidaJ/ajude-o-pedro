@@ -98,16 +98,14 @@ function reserve_numbers(
             }
         }
 
-        $minutes = max(5, (int) config('app.reservation_minutes', 30));
         $token = public_token();
         $total = count($rows) * (float) $campaign['number_price'];
-        $expires = (new DateTimeImmutable("+{$minutes} minutes"))->format('Y-m-d H:i:s');
 
         $o = $pdo->prepare(
             "INSERT INTO orders
                 (campaign_id, public_token, customer_name, customer_phone, customer_email,
                  total_amount, status, reserved_until)
-             VALUES (?, ?, ?, ?, ?, ?, 'pending', ?)"
+             VALUES (?, ?, ?, ?, ?, ?, 'pending', NULL)"
         );
         $o->execute([
             $campaignId,
@@ -116,7 +114,6 @@ function reserve_numbers(
             normalize_phone($phone),
             $email ? strtolower(trim($email)) : null,
             $total,
-            $expires,
         ]);
         $orderId = (int) $pdo->lastInsertId();
 
@@ -125,13 +122,13 @@ function reserve_numbers(
         );
         $upd = $pdo->prepare(
             "UPDATE raffle_numbers
-             SET status = 'reserved', order_id = ?, reserved_until = ?
+             SET status = 'reserved', order_id = ?, reserved_until = NULL
              WHERE id = ?"
         );
 
         foreach ($rows as $row) {
             $rel->execute([$orderId, $row['id']]);
-            $upd->execute([$orderId, $expires, $row['id']]);
+            $upd->execute([$orderId, $row['id']]);
         }
 
         $pdo->commit();
@@ -140,7 +137,6 @@ function reserve_numbers(
             'id' => $orderId,
             'token' => $token,
             'total' => $total,
-            'expires' => $expires,
         ];
     } catch (Throwable $e) {
         if ($pdo->inTransaction()) {
