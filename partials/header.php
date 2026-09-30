@@ -22,8 +22,8 @@ $cssVersion = @filemtime(__DIR__ . '/../assets/css/app.css') ?: '1';
             Ajude o Pedro
         </a>
         <?php if ($campaignForHeader): ?>
-            <a class="btn btn-primary rounded-pill px-4 d-none d-sm-inline-flex" href="#numeros">
-                <i class="bi bi-ticket-perforated me-2"></i>Participar
+            <a class="btn btn-primary rounded-pill public-nav-cta" href="#numeros">
+                <i class="bi bi-ticket-perforated"></i><span>Participar</span>
             </a>
         <?php endif; ?>
     </div>
