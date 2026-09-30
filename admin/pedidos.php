@@ -86,13 +86,20 @@ require __DIR__ . '/partials/header.php';
     </form>
 </div>
 
-<div class="admin-card overflow-hidden">
+<?php if (!$orders): ?>
+    <div class="admin-card p-5 text-center text-secondary">Nenhuma participação encontrada.</div>
+<?php else: ?>
+
+<div class="admin-card overflow-hidden d-none d-md-block">
     <div class="table-responsive">
         <table class="table align-middle mb-0">
             <thead class="table-light"><tr><th>#</th><th>Participante</th><th>Números</th><th>Valor</th><th>Status</th><th>Data</th><th class="text-end">Ações</th></tr></thead>
             <tbody>
-            <?php if (!$orders): ?><tr><td colspan="7" class="text-center text-secondary py-5">Nenhuma participação encontrada.</td></tr><?php endif; ?>
             <?php foreach ($orders as $order): ?>
+            <?php
+            $badge = ['pending'=>'warning','paid'=>'success','cancelled'=>'secondary','expired'=>'secondary'][$order['status']] ?? 'secondary';
+            $statusLabel = ['pending'=>'Aguardando aprovação','paid'=>'Pago','cancelled'=>'Cancelado','expired'=>'Expirado (legado)'][$order['status']] ?? $order['status'];
+            ?>
             <tr>
                 <td><?= (int) $order['id'] ?></td>
                 <td>
@@ -101,13 +108,7 @@ require __DIR__ . '/partials/header.php';
                 </td>
                 <td style="max-width:260px"><span class="small"><?= e((string) $order['numbers']) ?></span></td>
                 <td><strong><?= money($order['total_amount']) ?></strong></td>
-                <td>
-                    <?php
-                    $badge = ['pending'=>'warning','paid'=>'success','cancelled'=>'secondary','expired'=>'secondary'][$order['status']] ?? 'secondary';
-                    $statusLabel = ['pending'=>'Aguardando aprovação','paid'=>'Pago','cancelled'=>'Cancelado','expired'=>'Expirado (legado)'][$order['status']] ?? $order['status'];
-                    ?>
-                    <span class="badge text-bg-<?= e($badge) ?>"><?= e($statusLabel) ?></span>
-                </td>
+                <td><span class="badge text-bg-<?= e($badge) ?>"><?= e($statusLabel) ?></span></td>
                 <td><span class="small"><?= e(date('d/m/Y H:i', strtotime($order['created_at']))) ?></span></td>
                 <td class="text-end">
                     <?php if ($order['status'] === 'pending'): ?>
@@ -133,4 +134,63 @@ require __DIR__ . '/partials/header.php';
         </table>
     </div>
 </div>
+
+<div class="participation-mobile-list d-md-none">
+    <?php foreach ($orders as $order): ?>
+        <?php
+        $badge = ['pending'=>'warning','paid'=>'success','cancelled'=>'secondary','expired'=>'secondary'][$order['status']] ?? 'secondary';
+        $statusLabel = ['pending'=>'Aguardando aprovação','paid'=>'Pago','cancelled'=>'Cancelado','expired'=>'Expirado (legado)'][$order['status']] ?? $order['status'];
+        $numbers = array_values(array_filter(array_map('trim', explode(',', (string) $order['numbers']))));
+        ?>
+        <article class="participation-mobile-card">
+            <div class="participation-mobile-head">
+                <div class="min-w-0">
+                    <div class="d-flex align-items-center gap-2 mb-1">
+                        <span class="participation-id">#<?= (int) $order['id'] ?></span>
+                        <span class="badge text-bg-<?= e($badge) ?>"><?= e($statusLabel) ?></span>
+                    </div>
+                    <h2 class="participation-name"><?= e($order['customer_name']) ?></h2>
+                    <div class="participation-phone"><?= e($order['customer_phone']) ?></div>
+                </div>
+                <div class="participation-value"><?= money($order['total_amount']) ?></div>
+            </div>
+
+            <div class="participation-mobile-section">
+                <div class="participation-label">Números</div>
+                <div class="participation-numbers">
+                    <?php foreach ($numbers as $number): ?>
+                        <span><?= e(str_pad($number, 4, '0', STR_PAD_LEFT)) ?></span>
+                    <?php endforeach; ?>
+                </div>
+            </div>
+
+            <div class="participation-meta">
+                <span><i class="bi bi-calendar3"></i><?= e(date('d/m/Y H:i', strtotime($order['created_at']))) ?></span>
+            </div>
+
+            <?php if ($order['status'] === 'pending'): ?>
+                <div class="participation-actions">
+                    <form method="post">
+                        <?= csrf_field() ?>
+                        <input type="hidden" name="order_id" value="<?= (int) $order['id'] ?>">
+                        <input type="hidden" name="action" value="paid">
+                        <button class="btn btn-success w-100" onclick="return confirm('Confirma que o Pix deste pedido foi recebido?')">
+                            <i class="bi bi-check2-circle me-1"></i>Confirmar pagamento
+                        </button>
+                    </form>
+                    <form method="post">
+                        <?= csrf_field() ?>
+                        <input type="hidden" name="order_id" value="<?= (int) $order['id'] ?>">
+                        <input type="hidden" name="action" value="cancelled">
+                        <button class="btn btn-outline-danger w-100" onclick="return confirm('Cancelar esta reserva e liberar os números?')">
+                            <i class="bi bi-x-circle me-1"></i>Cancelar reserva
+                        </button>
+                    </form>
+                </div>
+            <?php endif; ?>
+        </article>
+    <?php endforeach; ?>
+</div>
+
+<?php endif; ?>
 <?php require __DIR__ . '/partials/footer.php'; ?>
