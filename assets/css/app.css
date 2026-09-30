@@ -188,3 +188,121 @@ body{background:#f7f9fc;color:var(--pedro-ink);font-family:Inter,system-ui,-appl
         margin:0 auto;
     }
 }
+
+
+/* Mobile-first refinements */
+body{overflow-x:hidden}
+img{max-width:100%}
+.public-nav-cta{display:inline-flex;align-items:center;justify-content:center;gap:.45rem;white-space:nowrap}
+.admin-mobile-bar{display:flex;align-items:center;justify-content:space-between;gap:1rem;position:sticky;top:0;z-index:1030;background:#0f1e33;color:#fff;padding:.7rem max(1rem,env(safe-area-inset-right)) .7rem max(1rem,env(safe-area-inset-left));box-shadow:0 8px 28px rgba(8,24,44,.14)}
+.admin-mobile-brand{display:flex;align-items:center;gap:.65rem;min-width:0;color:#fff;text-decoration:none}
+.admin-mobile-brand .brand-heart{width:38px;height:38px;border-radius:12px;flex:0 0 auto}
+.admin-mobile-brand span:last-child{display:flex;flex-direction:column;min-width:0;line-height:1.1}
+.admin-mobile-brand strong{font-size:.95rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.admin-mobile-brand small{font-size:.72rem;color:rgba(255,255,255,.58);margin-top:.18rem}
+.admin-menu-button{width:44px;height:44px;border:1px solid rgba(255,255,255,.18);border-radius:12px;color:#fff;display:inline-flex;align-items:center;justify-content:center;padding:0}
+.admin-menu-button:hover,.admin-menu-button:focus{color:#fff;background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.28)}
+.admin-menu-button i{font-size:1.65rem;line-height:1}
+.admin-mobile-menu{--bs-offcanvas-width:min(86vw,330px);background:#0f1e33;color:#fff;border:0}
+.admin-mobile-menu .offcanvas-header{border-bottom:1px solid rgba(255,255,255,.09)}
+.admin-mobile-menu .offcanvas-body{display:flex;flex-direction:column;padding:1rem}
+.admin-mobile-nav{flex:1}
+.admin-mobile-account{border-top:1px solid rgba(255,255,255,.12);padding-top:1rem;margin-top:1rem}
+
+@media(max-width:991.98px){
+    .admin-main{margin-left:0}
+    .admin-main>.container-fluid{max-width:100%;padding-left:1rem!important;padding-right:1rem!important}
+    .admin-card{border-radius:16px}
+    .admin-main .table-responsive{overflow-x:auto;-webkit-overflow-scrolling:touch}
+    .admin-main .table-responsive>.table{min-width:720px}
+    .admin-main .table-responsive::-webkit-scrollbar{height:7px}
+    .admin-main .table-responsive::-webkit-scrollbar-thumb{background:#c7d2df;border-radius:999px}
+    .admin-main .d-flex.flex-wrap.align-items-end.justify-content-between>.btn,
+    .admin-main .d-flex.flex-wrap.align-items-center.justify-content-between>.btn{flex:0 0 auto}
+    .campaign-image-editor-cover{grid-template-columns:180px minmax(0,1fr)}
+}
+
+@media(max-width:767.98px){
+    .container{--bs-gutter-x:2rem}
+    .navbar>.container{min-height:58px}
+    .navbar-brand .brand-heart{width:36px;height:36px;border-radius:11px}
+    .public-nav-cta{padding:.55rem .85rem!important;font-size:.88rem}
+    .public-nav-cta i{font-size:.95rem}
+
+    .hero{padding-top:1.35rem}
+    .hero .container>.row{--bs-gutter-y:1.5rem}
+    .hero .col-lg-6:first-child{text-align:left}
+    .display-title{margin-top:.7rem!important;margin-bottom:1rem!important;letter-spacing:-.045em}
+    .lead-copy{margin-bottom:1.1rem!important}
+    .hero .soft-card{padding:1rem!important}
+    .stat-number{font-size:1.2rem}
+    .progress{height:9px}
+    .hero-photo.hero-raffle-cover{max-width:440px;margin:0 auto;box-shadow:0 16px 38px rgba(29,69,120,.14)}
+
+    #historia .row{--bs-gutter-y:2rem}
+    .story-copy{font-size:.98rem;line-height:1.75}
+    #historia .gallery-img{border-radius:16px}
+
+    #numeros .text-center.mx-auto.mb-5{margin-bottom:1.5rem!important}
+    #numeros .display-6,#doar .display-6{font-size:clamp(1.8rem,8vw,2.35rem)}
+    #numeros .soft-card{padding:1rem!important}
+    .number-toolbar{gap:.75rem}
+    .number-toolbar>.d-flex{font-size:.82rem!important}
+    .number-search .form-control,.number-search .input-group-text,.number-search .btn{min-height:46px}
+    .number-grid{padding:1px;max-height:390px;overscroll-behavior:contain}
+    .number-button{min-height:48px;font-size:.9rem}
+    .number-pagination{margin-top:.8rem!important}
+    .number-pagination [data-number-page-label]{font-size:.74rem!important;line-height:1.25}
+    .checkout-card{margin-top:.25rem;padding:1.1rem!important}
+    .checkout-card .form-control{min-height:48px}
+    .checkout-card [data-submit]{min-height:52px;font-size:1rem}
+    .selected-list{max-height:105px}
+
+    #doar .row{--bs-gutter-y:1.5rem}
+    #doar .soft-card{padding:1.15rem!important}
+    #doar [data-donation-form] .d-flex.flex-wrap{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr));gap:.55rem!important}
+    #doar [data-donation-preset]{width:100%}
+    #doar .form-control,#doar .input-group-text{min-height:48px}
+
+    .payment-card .soft-card{padding:1rem!important}
+    .payment-card h1{font-size:1.65rem}
+    .payment-card .qr-box{width:min(240px,78vw);padding:10px;border-radius:18px}
+    .payment-card .btn-lg{font-size:1rem;min-height:50px}
+    .pix-code{font-size:.72rem;min-height:96px;line-height:1.45}
+
+    footer{margin-top:2rem!important;padding-top:2.2rem!important;padding-bottom:2.2rem!important}
+
+    .admin-main>.container-fluid{padding-top:1rem!important;padding-bottom:2rem!important}
+    .admin-main h1.h3{font-size:1.55rem}
+    .admin-main .admin-card.p-4{padding:1rem!important}
+    .admin-main .admin-card.p-3{padding:.85rem!important}
+    .admin-main .form-control,.admin-main .form-select,.admin-main .input-group-text{min-height:46px}
+    .admin-main textarea.form-control{min-height:auto}
+    .admin-main .btn{min-height:42px}
+    .admin-main .table>:not(caption)>*>*{padding:.72rem}
+    .admin-main .table-responsive>.table{min-width:680px}
+    .admin-main .display-6{font-size:2rem}
+    .admin-main .row.g-3.mb-4>.col-6{width:100%}
+    .admin-main .row.g-3.mb-4 .admin-card{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:.4rem}
+    .admin-main .row.g-3.mb-4 .admin-card .small{width:100%}
+    .admin-main .row.g-3.mb-4 .admin-card .display-6,
+    .admin-main .row.g-3.mb-4 .admin-card .h3{margin:0}
+    .campaign-image-editor,.campaign-image-editor-cover{grid-template-columns:1fr;padding:.85rem}
+    .campaign-image-preview,.campaign-image-preview-cover{max-width:190px}
+}
+
+@media(max-width:420px){
+    .navbar-brand{font-size:.92rem}
+    .navbar-brand .brand-heart{width:34px;height:34px}
+    .public-nav-cta{padding:.5rem .7rem!important}
+    .public-nav-cta span{font-size:.8rem}
+    .display-title{font-size:2.15rem}
+    .hero .d-flex.flex-wrap>.btn{font-size:.94rem;min-height:48px}
+    .number-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:7px}
+    .number-button{min-height:47px}
+    .number-pagination{grid-template-columns:44px 1fr 44px;gap:.4rem}
+    .number-pagination .btn{min-width:44px}
+    .admin-mobile-brand strong{max-width:180px}
+    .admin-main>.container-fluid{padding-left:.75rem!important;padding-right:.75rem!important}
+    .admin-main .table-responsive>.table{min-width:640px}
+}
