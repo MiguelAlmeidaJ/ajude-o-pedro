@@ -306,3 +306,114 @@ img{max-width:100%}
     .admin-main>.container-fluid{padding-left:.75rem!important;padding-right:.75rem!important}
     .admin-main .table-responsive>.table{min-width:640px}
 }
+
+
+/* Participações em cards no mobile */
+.participation-mobile-list{
+    display:grid;
+    gap:.85rem;
+}
+.participation-mobile-card{
+    background:#fff;
+    border:1px solid #e4eaf2;
+    border-radius:18px;
+    padding:1rem;
+    box-shadow:0 8px 24px rgba(34,63,96,.05);
+}
+.participation-mobile-head{
+    display:flex;
+    align-items:flex-start;
+    justify-content:space-between;
+    gap:1rem;
+}
+.participation-mobile-head .min-w-0{min-width:0}
+.participation-id{
+    font-size:.78rem;
+    font-weight:800;
+    color:#6f7f93;
+}
+.participation-name{
+    font-size:1.08rem;
+    line-height:1.25;
+    margin:0;
+    font-weight:800;
+    overflow-wrap:anywhere;
+}
+.participation-phone{
+    margin-top:.2rem;
+    color:var(--pedro-muted);
+    font-size:.88rem;
+    overflow-wrap:anywhere;
+}
+.participation-value{
+    flex:0 0 auto;
+    font-size:1.06rem;
+    font-weight:800;
+    white-space:nowrap;
+}
+.participation-mobile-section{
+    border-top:1px solid #edf1f6;
+    margin-top:.9rem;
+    padding-top:.85rem;
+}
+.participation-label{
+    color:var(--pedro-muted);
+    font-size:.78rem;
+    font-weight:700;
+    text-transform:uppercase;
+    letter-spacing:.04em;
+    margin-bottom:.45rem;
+}
+.participation-numbers{
+    display:flex;
+    flex-wrap:wrap;
+    gap:.4rem;
+}
+.participation-numbers span{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    min-width:48px;
+    min-height:34px;
+    padding:.25rem .55rem;
+    border-radius:10px;
+    background:var(--pedro-soft);
+    color:var(--pedro-blue-dark);
+    font-size:.84rem;
+    font-weight:800;
+}
+.participation-meta{
+    display:flex;
+    align-items:center;
+    gap:.5rem;
+    color:var(--pedro-muted);
+    font-size:.82rem;
+    margin-top:.85rem;
+}
+.participation-meta span{
+    display:inline-flex;
+    align-items:center;
+    gap:.4rem;
+}
+.participation-actions{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:.55rem;
+    border-top:1px solid #edf1f6;
+    margin-top:.9rem;
+    padding-top:.9rem;
+}
+.participation-actions form{margin:0}
+.participation-actions .btn{
+    min-height:46px;
+    font-size:.88rem;
+    padding:.6rem .7rem;
+}
+
+@media(max-width:420px){
+    .participation-mobile-card{padding:.9rem;border-radius:16px}
+    .participation-mobile-head{gap:.7rem}
+    .participation-name{font-size:1rem}
+    .participation-value{font-size:.98rem}
+    .participation-actions{grid-template-columns:1fr}
+}
