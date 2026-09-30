@@ -21,7 +21,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     redirect('/admin/pedidos.php');
 }
 
-$status = (string) ($_GET['status'] ?? '');
+$status = (string) ($_GET['status'] ?? 'pending');
 $campaignId = (int) ($_GET['campaign_id'] ?? 0);
 
 $where = [];
@@ -77,7 +77,7 @@ require __DIR__ . '/partials/header.php';
             <label class="form-label small">Status</label>
             <select class="form-select" name="status">
                 <option value="">Todos</option>
-                <?php foreach (['pending'=>'Aguardando aprovação','paid'=>'Pago','cancelled'=>'Cancelado'] as $v=>$label): ?>
+                <?php foreach (['pending'=>'Aguardando pagamento','paid'=>'Pago','cancelled'=>'Cancelado'] as $v=>$label): ?>
                     <option value="<?= e($v) ?>" <?= $status===$v?'selected':'' ?>><?= e($label) ?></option>
                 <?php endforeach; ?>
             </select>
@@ -98,7 +98,7 @@ require __DIR__ . '/partials/header.php';
             <?php foreach ($orders as $order): ?>
             <?php
             $badge = ['pending'=>'warning','paid'=>'success','cancelled'=>'secondary','expired'=>'secondary'][$order['status']] ?? 'secondary';
-            $statusLabel = ['pending'=>'Aguardando aprovação','paid'=>'Pago','cancelled'=>'Cancelado','expired'=>'Expirado (legado)'][$order['status']] ?? $order['status'];
+            $statusLabel = ['pending'=>'Aguardando pagamento','paid'=>'Pago','cancelled'=>'Cancelado','expired'=>'Expirado (legado)'][$order['status']] ?? $order['status'];
             ?>
             <tr>
                 <td><?= (int) $order['id'] ?></td>
@@ -139,7 +139,7 @@ require __DIR__ . '/partials/header.php';
     <?php foreach ($orders as $order): ?>
         <?php
         $badge = ['pending'=>'warning','paid'=>'success','cancelled'=>'secondary','expired'=>'secondary'][$order['status']] ?? 'secondary';
-        $statusLabel = ['pending'=>'Aguardando aprovação','paid'=>'Pago','cancelled'=>'Cancelado','expired'=>'Expirado (legado)'][$order['status']] ?? $order['status'];
+        $statusLabel = ['pending'=>'Aguardando pagamento','paid'=>'Pago','cancelled'=>'Cancelado','expired'=>'Expirado (legado)'][$order['status']] ?? $order['status'];
         $numbers = array_values(array_filter(array_map('trim', explode(',', (string) $order['numbers']))));
         ?>
         <article class="participation-mobile-card">
